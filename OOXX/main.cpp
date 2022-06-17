@@ -1,13 +1,28 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <windows.h>
 #include "winner.h"
 #include "Tfest.h"
 #include "slicemap.h"
 using namespace std;
 using namespace sf;
+Sprite s[9], f[81];
+Sprite Learn(int x, int y){
+    if(x <= 200 && x >= 30 && y >= 650 && y <= 850){//Step1
+        return s[4];
+    }else if(x <= 400 && x >= 201 && y >= 650 && y <= 850){//Step2
+        return s[5];
+    }else if(x <= 620 && x >=401 && y >= 650 && y <= 850){//Step3
+        return s[6];
+    }else if(x <= 890 && x >= 621 && y >= 650 && y <= 850){//goal
+        return s[7];
+    }else{
+        return s[8];
+    }
+}
 int main(){
     int bigmap[3][3] = {0}, lmap[3][3] = {0}, map[9][3][3] = {0},
-    d = 0, k = 1, TFSet = 0, x, y, n = 0, learn = 0;
+    d = 0, k = 1, TFSet = 0, n = 0, m = 0, learn = 0, x, y;
     RenderWindow window(VideoMode(900, 800), "game");
     Texture t[9];
     t[0].loadFromFile("C:/Users/USER/OneDrive/桌面/images/map.png");
@@ -19,7 +34,6 @@ int main(){
     t[6].loadFromFile("C:/Users/USER/OneDrive/桌面/images/step3.png");
     t[7].loadFromFile("C:/Users/USER/OneDrive/桌面/images/step4.png");
     t[8].loadFromFile("C:/Users/USER/OneDrive/桌面/images/step5.png");
-    Sprite s[9], f[81];
     for(int i = 0; i < 9; i++){
         s[i].setTexture(t[i]);
         s[i].setScale(0.75f, 1.13f);
@@ -34,46 +48,37 @@ int main(){
             if(e.type == Event::Closed)window.close();
         }
         window.clear();
-        if(Mouse::isButtonPressed(Mouse::Left) && n == 0){
+        if(Mouse::isButtonPressed(Mouse::Left) && n == 0 && m == 0){
         	if(localPosition.x <= 490 &&localPosition.x >= 400 &&
             localPosition.y >= 350 && localPosition.y <= 430){//單人選項
             	n++;
+            	window.draw(s[0]);
+            	window.display();
+            	Sleep(300);
+            	continue;
         	}
         	if(localPosition.x <= 490 && localPosition.x >= 400 &&
             localPosition.y >= 470 && localPosition.y <= 540){//多人選項
-            	n++;
+            	m++;
+            	window.draw(s[0]);
+            	window.display();
+            	Sleep(300);
+            	continue;
         	}
         	if(localPosition.x <= 490 && localPosition.x >= 400 &&
             localPosition.y >= 580 && localPosition.y <= 660){//教學選項
         		learn++;
         	}
     	}
-        if(n != 0){
+        if(n != 0 || m != 0){
 			window.draw(s[0]);//遊戲圖片
-		}else{
-		    if(learn != 0){//教學圖片A
-				window.draw(s[8]);
-				if(localPosition.x <= 200 && localPosition.x >= 30 &&
-                localPosition.y >= 650 && localPosition.y <= 850){//Step1
-					window.draw(s[4]);
-        		}
-				if(localPosition.x <= 400 && localPosition.x >= 201 &&
-                localPosition.y >= 650 && localPosition.y <= 850){//Step2
-            		window.draw(s[5]);
-        		}
-        		if(localPosition.x <= 620 && localPosition.x >=401 &&
-                localPosition.y>=650&&localPosition.y<=850){//Step3
-            		window.draw(s[6]);
-        		}
-        		if(localPosition.x <= 890 && localPosition.x >= 621 &&
-                localPosition.y>=650&&localPosition.y<=850){//goal
-        			window.draw(s[7]);
-        		}
-        		if(Keyboard::isKeyPressed(Keyboard::Up)){
-        			learn = 0;
-				}
-			}
-		    else window.draw(s[3]);
+		}else if(learn != 0){//教學圖片A
+            window.draw(Learn(localPosition.x, localPosition.y));
+            if(Keyboard::isKeyPressed(Keyboard::Up)){
+                learn = 0;
+            }
+        }else{
+		    window.draw(s[3]);
         }
         if(d % 2 == 0){
             f[d].setTexture(t[1]);
@@ -84,15 +89,19 @@ int main(){
             k = 2;
             f[d].setScale(0.34f,0.452f);
         }
-        if(Mouse::isButtonPressed(Mouse::Left) && n != 0){
-            if(d == 0){
-                TFSet = position(localPosition.x, localPosition.y, k,
-                x, y, bigmap, map);
+        if(Mouse::isButtonPressed(Mouse::Left)){
+            if(n != 0){
+                if(d == 0){
+                    TFSet = position(localPosition.x, localPosition.y, k,
+                    x, y, bigmap, map);
+                }else{
+                    TFSet = TFset(localPosition.x, localPosition.y, k, x,
+                    y, bigmap, map);
+                }
             }
-            else{
-                TFSet = TFset(localPosition.x, localPosition.y, k, x,
-                y, bigmap, map);
-            }
+            /*if(m != 0){
+                continue;
+            }*/
         }
         if(TFSet != 0){
             f[d].setPosition(x, y);
