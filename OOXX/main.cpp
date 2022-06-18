@@ -6,7 +6,7 @@
 #include "slicemap.h"
 using namespace std;
 using namespace sf;
-Sprite s[9], f[81];
+Sprite s[12], f[81];
 Sprite Learn(int x, int y){
     if(x <= 200 && x >= 30 && y >= 650 && y <= 850){//Step1
         return s[4];
@@ -23,8 +23,9 @@ Sprite Learn(int x, int y){
 int main(){
     int bigmap[3][3] = {0}, lmap[3][3] = {0}, map[9][3][3] = {0},
     d = 0, k = 1, TFSet = 0, n = 0, m = 0, learn = 0, x, y;
+    bool mapover = false;
     RenderWindow window(VideoMode(900, 800), "game");
-    Texture t[9];
+    Texture t[12];
     t[0].loadFromFile("C:/Users/USER/OneDrive/桌面/images/map.png");
     t[1].loadFromFile("C:/Users/USER/OneDrive/桌面/images/X.jpg");
     t[2].loadFromFile("C:/Users/USER/OneDrive/桌面/images/O.png");
@@ -34,7 +35,10 @@ int main(){
     t[6].loadFromFile("C:/Users/USER/OneDrive/桌面/images/step3.png");
     t[7].loadFromFile("C:/Users/USER/OneDrive/桌面/images/step4.png");
     t[8].loadFromFile("C:/Users/USER/OneDrive/桌面/images/step5.png");
-    for(int i = 0; i < 9; i++){
+    t[9].loadFromFile("C:/Users/USER/OneDrive/桌面/images/XW.png");
+    t[10].loadFromFile("C:/Users/USER/OneDrive/桌面/images/OW.png");
+    t[11].loadFromFile("C:/Users/USER/OneDrive/桌面/images/tie.png");
+    for(int i = 0; i < 12; i++){
         s[i].setTexture(t[i]);
         s[i].setScale(0.75f, 1.13f);
     }
@@ -48,7 +52,8 @@ int main(){
             if(e.type == Event::Closed)window.close();
         }
         window.clear();
-        if(Mouse::isButtonPressed(Mouse::Left) && n == 0 && m == 0){
+        if(Mouse::isButtonPressed(Mouse::Left) && n == 0 && m == 0 &&
+        winner(lmap) != true && mapover != true){
         	if(localPosition.x <= 490 &&localPosition.x >= 400 &&
             localPosition.y >= 350 && localPosition.y <= 430){//單人選項
             	n++;
@@ -77,7 +82,7 @@ int main(){
             if(Keyboard::isKeyPressed(Keyboard::Up)){
                 learn = 0;
             }
-        }else{
+        }else if(winner(lmap) != true && mapover != true){
 		    window.draw(s[3]);
         }
         if(d % 2 == 0){
@@ -108,14 +113,25 @@ int main(){
             d++;
             slicemap(map, lmap, TFSet);
         }
-        for(int i = 0; i < d; i++)window.draw(f[i]);
-        window.display();
-        if(winner(lmap) == true)break;
-        bool mapover = true;
+        mapover = true;
         for(int i = 0; i < 9; i++)
             for(int j = 0; j < 3; j++)
                 for(int a = 0; a < 3; a++)
                     if(map[i][j][a] == 0)mapover = false;
-        if(mapover == true)break;
+        if(winner(lmap) == true && k == 1){//叉叉贏
+            window.draw(s[9]);
+            d--;
+            n = 0;
+    	}else if(winner(lmap) == true){//圈圈贏
+            window.draw(s[10]);
+            d--;
+            n = 0;
+		}else if(mapover == true){//和局
+            window.draw(s[11]);
+            n = 0;
+		}else{
+            for(int i = 0; i < d; i++)window.draw(f[i]);
+		}
+		window.display();
     }
 }
