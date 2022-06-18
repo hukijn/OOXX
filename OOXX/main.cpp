@@ -104,9 +104,15 @@ int main(){
                     y, bigmap, map);
                 }
             }
-            /*if(m != 0){
-                continue;
-            }*/
+            if(m != 0){
+                if(d == 0){
+                    TFSet = position(localPosition.x, localPosition.y, k,
+                    x, y, bigmap, map);
+                }else{
+                    TFSet = TFset(localPosition.x, localPosition.y, k, x,
+                    y, bigmap, map);
+                }
+            }
         }
         if(TFSet != 0){
             f[d].setPosition(x, y);
@@ -122,13 +128,16 @@ int main(){
             window.draw(s[9]);
             d--;
             n = 0;
+            m = 0;
     	}else if(winner(lmap) == true){//°é°éÄ¹
             window.draw(s[10]);
             d--;
             n = 0;
+            m = 0;
 		}else if(mapover == true){//©M§½
             window.draw(s[11]);
             n = 0;
+            m = 0;
 		}else{
             for(int i = 0; i < d; i++)window.draw(f[i]);
 		}
