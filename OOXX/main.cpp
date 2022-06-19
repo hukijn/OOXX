@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
 #include <windows.h>
 #include "winner.h"
 #include "Tfest.h"
@@ -22,8 +24,9 @@ Sprite Learn(int x, int y){
 }
 int main(){
     int bigmap[3][3] = {0}, lmap[3][3] = {0}, map[9][3][3] = {0},
-    d = 0, k = 1, TFSet = 0, n = 0, m = 0, learn = 0, x, y;
+    d = 0, k = 1, TFSet = 0, n = 0, m = 0, learn = 0, x, y, nx, ny;
     bool mapover = false;
+    srand(time(NULL));
     RenderWindow window(VideoMode(900, 800), "game");
     Texture t[12];
     t[0].loadFromFile("C:/Users/USER/OneDrive/桌面/images/map.png");
@@ -47,7 +50,7 @@ int main(){
     while(window.isOpen()){
         Event e;
         Vector2i localPosition = Mouse::getPosition(window);
-        cout<<localPosition.x<<' '<<localPosition.y<<endl;
+        //cout<<localPosition.x<<' '<<localPosition.y<<endl;
         while(window.pollEvent(e)){
             if(e.type == Event::Closed)window.close();
         }
@@ -56,7 +59,7 @@ int main(){
         winner(lmap) != true && mapover != true){
         	if(localPosition.x <= 490 &&localPosition.x >= 400 &&
             localPosition.y >= 350 && localPosition.y <= 430){//單人選項
-            	n++;
+            	n+=10;
             	window.draw(s[0]);
             	window.display();
             	Sleep(300);
@@ -75,9 +78,16 @@ int main(){
         		learn++;
         	}
     	}
-        if(n != 0 || m != 0){
-			window.draw(s[0]);//遊戲圖片
-		}else if(learn != 0){//教學圖片A
+        if(n != 0){
+			if(n > 2){
+                n = 1;
+                window.draw(s[0]);
+			}else{
+                window.draw(s[0]);
+			}
+		}else if(m != 0){
+		    window.draw(s[0]);
+        }else if(learn != 0){//教學圖片A
             window.draw(Learn(localPosition.x, localPosition.y));
             if(Keyboard::isKeyPressed(Keyboard::Up)){
                 learn = 0;
@@ -87,15 +97,29 @@ int main(){
         }
         if(d % 2 == 0){
             f[d].setTexture(t[1]);
-            k = 1;
             f[d].setScale(0.41f, 0.372f);
+            k = 1;
         }else{
             f[d].setTexture(t[2]);
-            k = 2;
             f[d].setScale(0.34f,0.452f);
+            k = 2;
         }
-        if(Mouse::isButtonPressed(Mouse::Left)){
+        if(Mouse::isButtonPressed(Mouse::Left) || n == 2){
             if(n != 0){
+                if(n == 1){
+                    nx = localPosition.x;
+                    ny = localPosition.y;
+                }else{
+                    nx = rand() % 901;
+                    ny = rand() % 801;
+                }
+                if(d == 0){
+                    TFSet = position(nx, ny, k, x, y, bigmap, map);
+                }else{
+                    TFSet = TFset(nx, ny, k, x, y, bigmap, map);
+                }
+            }
+            if(m != 0){
                 if(d == 0){
                     TFSet = position(localPosition.x, localPosition.y, k,
                     x, y, bigmap, map);
@@ -104,14 +128,17 @@ int main(){
                     y, bigmap, map);
                 }
             }
-            /*if(m != 0){
-                continue;
-            }*/
         }
         if(TFSet != 0){
             f[d].setPosition(x, y);
             d++;
             slicemap(map, lmap, TFSet);
+            if(n == 1){
+                n = 2;
+            }else{
+                Sleep(1000);
+                n = 1;
+            }
         }
         mapover = true;
         for(int i = 0; i < 9; i++)
@@ -122,16 +149,22 @@ int main(){
             window.draw(s[9]);
             d--;
             n = 0;
+            m = 0;
     	}else if(winner(lmap) == true){//圈圈贏
             window.draw(s[10]);
             d--;
             n = 0;
+            m = 0;
 		}else if(mapover == true){//和局
             window.draw(s[11]);
             n = 0;
+            m = 0;
 		}else{
-            for(int i = 0; i < d; i++)window.draw(f[i]);
+            for(int i = 0; i < d; i++){
+                window.draw(f[i]);
+            }
 		}
 		window.display();
+		TFSet = 0;
     }
 }
