@@ -27,34 +27,38 @@ int main(){
     d = 0, k = 1, TFSet = 0, n = 0, m = 0, learn = 0, x, y, nx, ny;
     bool mapover = false;
     srand(time(NULL));
-    RenderWindow window(VideoMode(900, 800), "game");
-    Texture t[12];
-    t[0].loadFromFile("C:/Users/USER/OneDrive/桌面/images/map.png");
-    t[1].loadFromFile("C:/Users/USER/OneDrive/桌面/images/X.jpg");
-    t[2].loadFromFile("C:/Users/USER/OneDrive/桌面/images/O.png");
-    t[3].loadFromFile("C:/Users/USER/OneDrive/桌面/images/start.png");
-    t[4].loadFromFile("C:/Users/USER/OneDrive/桌面/images/step1.png");
-    t[5].loadFromFile("C:/Users/USER/OneDrive/桌面/images/step2.png");
-    t[6].loadFromFile("C:/Users/USER/OneDrive/桌面/images/step3.png");
-    t[7].loadFromFile("C:/Users/USER/OneDrive/桌面/images/step4.png");
-    t[8].loadFromFile("C:/Users/USER/OneDrive/桌面/images/step5.png");
-    t[9].loadFromFile("C:/Users/USER/OneDrive/桌面/images/XW.png");
-    t[10].loadFromFile("C:/Users/USER/OneDrive/桌面/images/OW.png");
-    t[11].loadFromFile("C:/Users/USER/OneDrive/桌面/images/tie.png");
+    RenderWindow window(VideoMode(900, 800), "game");//產生視窗
+    Texture t[12]; //圖片載入 
+    t[0].loadFromFile("C:/Users/彧/Desktop/c++ project/images/map.png");
+    t[1].loadFromFile("C:/Users/彧/Desktop/c++ project/images/X.jpg");
+    t[2].loadFromFile("C:/Users/彧/Desktop/c++ project/images/O.png");
+    t[3].loadFromFile("C:/Users/彧/Desktop/c++ project/images/start.png");
+    t[4].loadFromFile("C:/Users/彧/Desktop/c++ project/images/step1.png");
+    t[5].loadFromFile("C:/Users/彧/Desktop/c++ project/images/step2.png");
+    t[6].loadFromFile("C:/Users/彧/Desktop/c++ project/images/step3.png");
+    t[7].loadFromFile("C:/Users/彧/Desktop/c++ project/images/step4.png");
+    t[8].loadFromFile("C:/Users/彧/Desktop/c++ project/images/step5.png");
+    t[9].loadFromFile("C:/Users/彧/Desktop/c++ project/images/XW.png");
+    t[10].loadFromFile("C:/Users/彧/Desktop/c++ project/images/OW.png");
+    t[11].loadFromFile("C:/Users/彧/Desktop/c++ project/images/tie.png");
     for(int i = 0; i < 12; i++){
         s[i].setTexture(t[i]);
         s[i].setScale(0.75f, 1.13f);
     }
-    s[0].setScale(1.05f, 1.05f);
+    s[0].setScale(1.05f, 1.05f);//更改影像比例 
     s[3].setScale(0.95f, 1.5f);
+    s[9].setScale(0.33f, 0.58f);
+    s[10].setScale(0.33f, 0.58f);
+    s[11].setScale(0.33f, 0.58f);
     while(window.isOpen()){
-        Event e;
-        Vector2i localPosition = Mouse::getPosition(window);
+        Event e; //創造事件 
+        Vector2i localPosition = Mouse::getPosition(window); //設定偵測滑鼠在視窗的座標 
         //cout<<localPosition.x<<' '<<localPosition.y<<endl;
-        while(window.pollEvent(e)){
+        while(window.pollEvent(e)){ //事件處理 
             if(e.type == Event::Closed)window.close();
         }
         window.clear();
+        //window.setVerticalSyncEnabled(false);
         if(Mouse::isButtonPressed(Mouse::Left) && n == 0 && m == 0 &&
         winner(lmap) != true && mapover != true){
         	if(localPosition.x <= 490 &&localPosition.x >= 400 &&
@@ -62,7 +66,7 @@ int main(){
             	n+=10;
             	window.draw(s[0]);
             	window.display();
-            	Sleep(300);
+            	Sleep(300);//暫停3秒 
             	continue;
         	}
         	if(localPosition.x <= 490 && localPosition.x >= 400 &&
@@ -82,24 +86,25 @@ int main(){
 			if(n > 2){
                 n = 1;
                 window.draw(s[0]);
-			}else{
+			}
+			else{
                 window.draw(s[0]);
 			}
 		}else if(m != 0){
 		    window.draw(s[0]);
         }else if(learn != 0){//教學圖片A
             window.draw(Learn(localPosition.x, localPosition.y));
-            if(Keyboard::isKeyPressed(Keyboard::Up)){
+            if(Keyboard::isKeyPressed(Keyboard::Up)){ //從教學跳回主頁 
                 learn = 0;
             }
         }else if(winner(lmap) != true && mapover != true){
 		    window.draw(s[3]);
         }
-        if(d % 2 == 0){
+        if(d % 2 == 0){//畫 X 
             f[d].setTexture(t[1]);
             f[d].setScale(0.41f, 0.372f);
             k = 1;
-        }else{
+        }else{//畫 O 
             f[d].setTexture(t[2]);
             f[d].setScale(0.34f,0.452f);
             k = 2;
@@ -132,7 +137,7 @@ int main(){
         if(TFSet != 0){
             f[d].setPosition(x, y);
             d++;
-            slicemap(map, lmap, TFSet);
+            slicemap(map, lmap, TFSet);//初始化 
             if(n == 1){
                 n = 2;
             }else{
@@ -150,7 +155,7 @@ int main(){
             d--;
             n = 0;
             m = 0;
-    	}else if(winner(lmap) == true){//圈圈贏
+    	}else if(winner(lmap) == true && k == 2){//圈圈贏
             window.draw(s[10]);
             d--;
             n = 0;
